@@ -36,9 +36,9 @@ const genDiff = (obj1, obj2) => {
     if (pair.type === 'added') return `+ ${pair.key}: ${pair.value}`;
     if (pair.type === 'deleted') return `- ${pair.key}: ${pair.value}`;
     if (pair.type === 'object') return `- ${pair.key}: ${pair.value}`;
-    if (pair.type === 'changed') return `- ${pair.key}: ${pair.oldValue}\n+ ${pair.key}:${pair.newValue}`;
+    if (pair.type === 'changed') return `- ${pair.key}: ${pair.oldValue}\n+ ${pair.key}: ${pair.newValue}`;
     if (pair.type === 'unchanged') return `  ${pair.key}: ${pair.value}`;
-  }).join(' \n');
+  }).join('\n');
 };
 
 export default genDiff;
