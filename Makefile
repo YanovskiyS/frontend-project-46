@@ -1,18 +1,22 @@
-lint: #lint
-	npx eslint .
+install: install-deps
+	npx simple-git-hooks
 
-fix: #fix
-	npx eslint . --fix
+run:
+	bin/nodejs-package.js 10
 
-publish: #publish
-	npm publish --dry-run
-
-install: #install
+install-deps:
 	npm ci
 
-jest: #jest
-	NODE_OPTIONS=--experimental-vm-modules npx jest
+test:
+	npm test
 
-coverage: #jest coverage
-	NODE_OPTIONS=--experimental-vm-modules npx jest --coverage
+test-coverage:
+	npm test -- --coverage --coverageProvider=v8
 
+lint:
+	npx eslint .
+
+publish:
+	npm publish
+
+.PHONY: test
