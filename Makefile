@@ -1,24 +1,18 @@
-run:
-	node bin/gendiff.js
-
-install: install-deps
-	npx simple-git-hooks
-
-run:
-	bin/nodejs-package.js 10
-
-install-deps:
-	npm ci
-
-test:
-	NODE_OPTIONS=--experimental-vm-modules npx jest
-
-test-coverage:
-	npm test -- --coverage --coverageProvider=v8
-
-lint:
+lint: #lint
 	npx eslint .
 
-publish:
+fix: #fix
+	npx eslint . --fix
+
+publish: #publish
 	npm publish --dry-run
+
+install: #install
+	npm ci
+
+jest: #jest
+	NODE_OPTIONS=--experimental-vm-modules npx jest
+
+coverage: #jest coverage
+	NODE_OPTIONS=--experimental-vm-modules npx jest --coverage
 
