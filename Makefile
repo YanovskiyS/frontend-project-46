@@ -8,10 +8,10 @@ install-deps:
 	npm ci
 
 test:
-	npm test
+	npx jest
 
 test-coverage:
-	npm test -- --coverage --coverageProvider=v8
+	npx jest --coverage
 
 lint:
 	npx eslint .
