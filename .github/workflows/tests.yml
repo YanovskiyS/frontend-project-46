@@ -10,8 +10,8 @@ jobs:
         with:
           node-version: '16.x'
           cache: 'npm'
-      - run: make install
-      - run: make jest
+      - run: make install-deps
+      - run: make test
       - name: test coverage
         uses: paambaati/codeclimate-action@v3.2.0
         env:
