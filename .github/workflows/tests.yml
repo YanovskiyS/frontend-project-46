@@ -1,18 +1,21 @@
-lint: #lint
-	npx eslint .
-
-fix: #fix
-	npx eslint . --fix
-
-publish: #publish
-	npm publish --dry-run
-
-install: #install
-	npm ci
-
-jest: #jest
-	NODE_OPTIONS=--experimental-vm-modules npx jest
-
-coverage: #jest coverage
-	NODE_OPTIONS=--experimental-vm-modules npx jest --coverage
-
+name: tests
+on: push
+jobs:
+  jest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+      - run: make install
+      - run: make jest
+      - name: test coverage
+        uses: paambaati/codeclimate-action@v3.2.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC }}
+        with:
+          coverageCommand: make coverage
+          debug: true
