@@ -1,12 +1,12 @@
 import fs from 'fs';
-// eslint-disable-next-line no-unused-vars
 import _ from 'lodash';
+import parser from './parser.js';
+
+const getFormat = (filepath) => filepath.split('.')[1];
 
 const genDiff = (obj1, obj2) => {
-  let data1 = fs.readFileSync(obj1, 'utf8');
-  let data2 = fs.readFileSync(obj2, 'utf8');
-  data1 = JSON.parse(data1);
-  data2 = JSON.parse(data2);
+  const data1 = parser(fs.readFileSync(obj1, 'utf8'), getFormat(obj1));
+  const data2 = parser(fs.readFileSync(obj2, 'utf8'), getFormat(obj2));
   const keys1 = _.keys(data1);
   const keys2 = _.keys(data2);
   const allKeys = _.union(keys1, keys2);
