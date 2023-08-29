@@ -1,44 +1,24 @@
-import fs from 'fs';
-import _ from 'lodash';
+import { readFileSync } from 'node:fs';
+import path from 'path';
+import compareFiles from './compartion.js';
 import parser from './parser.js';
+import format from './formatters/index.js';
 
-const getFormat = (filepath) => filepath.split('.')[1];
+const readFile = (filePath) => {
+  const fullPath = path.resolve(process.cwd(), filePath);
+  return readFileSync(fullPath).toString();
+};
 
-const genDiff = (obj1, obj2) => {
-  const data1 = parser(fs.readFileSync(obj1, 'utf8'), getFormat(obj1));
-  const data2 = parser(fs.readFileSync(obj2, 'utf8'), getFormat(obj2));
-  const keys1 = _.keys(data1);
-  const keys2 = _.keys(data2);
-  const allKeys = _.union(keys1, keys2);
-  const sortedKeys = _.sortBy(allKeys);
+const findFileExtension = (filePath) => path.extname(filePath).slice(1);
 
-  const result = sortedKeys.map((key) => {
-    if (_.isObject(data1[key]) && _.isObject(data2[key])) {
-      return { type: 'object', key, value: genDiff(data1[key], data2[key]) };
-    }
-    if (!Object.hasOwn(data1, key)) {
-      return { type: 'added', key, value: data2[key] };
-    }
-    if (!Object.hasOwn(data2, key)) {
-      return { type: 'deleted', key, value: data1[key] };
-    }
-    if (data1[key] !== data2[key]) {
-      return {
-        type: 'changed', key, oldValue: data1[key], newValue: data2[key],
-      };
-    }
+const genDiff = (filePath1, filePath2, style = 'stylish') => {
+  const file1 = readFile(filePath1);
+  const file2 = readFile(filePath2);
 
-    return { type: 'unchanged', key, value: data1[key] };
-  });
+  const data1 = parser(file1, findFileExtension(filePath1));
+  const data2 = parser(file2, findFileExtension(filePath2));
 
-  // eslint-disable-next-line array-callback-return, consistent-return
-  return result.map((pair) => {
-    if (pair.type === 'added') return `+ ${pair.key}: ${pair.value}`;
-    if (pair.type === 'deleted') return `- ${pair.key}: ${pair.value}`;
-    if (pair.type === 'object') return `- ${pair.key}: ${pair.value}`;
-    if (pair.type === 'changed') return `- ${pair.key}: ${pair.oldValue}\n+ ${pair.key}: ${pair.newValue}`;
-    if (pair.type === 'unchanged') return `  ${pair.key}: ${pair.value}`;
-  }).join('\n');
+  return format((compareFiles(data1, data2)), style);
 };
 
 export default genDiff;
